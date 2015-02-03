@@ -2,7 +2,20 @@ require 'open-uri'
 require 'rss'
 require 'uri'
 
-class ImdbWatchlist
+class IMDbWatchlist
+  # Load and parse an IMDb watchlist.
+  #
+  # Example:
+  #   url = 'http://www.imdb.com/user/ur13693513/watchlist'
+  #   wl = ImdbWatchlist.new(url)
+  #   puts wl.to_s
+  #   wl.items.each do |item|
+  #     puts item.to_s
+  #   end
+  #
+  # Arguments:
+  #   url: (String)
+  
   @url
   @title
   @items
@@ -14,25 +27,34 @@ class ImdbWatchlist
   def initialize(url)
     @url = url
     
-    open(rss_url_for_url(url)) do |rss|
+    open(sanitize_url(url)) do |rss|
       feed = RSS::Parser.parse(rss)
       @title = feed.channel.title
       @items = feed.items.map { |feed_item| Item.new(feed_item) }
     end
   end
   
-  def rss_url_for_url(url)
+  def sanitize_url(url)
     uri = URI(url)
+    
+    # No scheme? Probably a local file path.
+    if uri.scheme == nil
+      return url
+    end
 
-    path_matches = /user\/(ur\d+)\/watchlist/.match(uri.path)
-    if not path_matches
-      raise "Invalid watchlist URL '#{url}'"
+    # Verify host
+    if not uri.host.end_with? 'imdb.com'
+      raise "Must provide an 'imdb.com' URL '#{url}"
     end
     
-    rss_host = 'rss.imdb.com'
-    if uri.host != rss_host
-      uri.host = rss_host
+    # Verify path
+    path_matches = /user\/(ur\d+)\/watchlist/.match(uri.path)
+    if not path_matches
+      raise "Must provide a watchlist URL '#{url}'"
     end
+    
+    # Require RSS subdomain
+    uri.host = 'rss.imdb.com'
     
     uri.to_s
   end
@@ -62,33 +84,5 @@ class ImdbWatchlist
     def to_s
       "#{id} - #{title} - #{url} - #{date_added}"
     end
-  end
-end
-
-# Tests
-
-def printWatchlist(url)
-  wl = ImdbWatchlist.new(url)
-  puts wl.to_s
-  wl.items.each do |item|
-    puts item.to_s
-  end
-end
-
-good_urls = ['http://rss.imdb.com/user/ur13693513/watchlist', 'http://www.imdb.com/user/ur13693513/watchlist']
-bad_urls = ['http://example.com', 'http://www.imdb.com/user/invaliduserid/watchlist', 'http://www.imdb.com/user/ur13693513/invalidpath']
-
-puts "Good URLs"
-good_urls.each { |url| printWatchlist(url) }
-
-
-puts "Bad URLs"
-bad_urls.each do |url| 
-  begin 
-    printWatchlist(url)
-  rescue Exception
-    puts "#{url} failed as expected."
-  else
-    raise "Expected #{url} to fail."
   end
 end

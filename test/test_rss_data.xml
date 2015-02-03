@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<rss version="2.0">
+    <channel>
+        <title>WATCHLIST</title>
+        <link>http://www.imdb.com/user/ur13693513/watchlist</link>
+        <description></description>
+        <pubDate>Mon, 04 Jul 2011 06:32:41 GMT</pubDate>
+        <lastBuildDate>Sun, 01 Feb 2015 08:01:25 GMT</lastBuildDate>
+        <item>
+          <pubDate>Sat, 10 Jan 2015 07:31:19 GMT</pubDate>
+            <title>Chappie (2015)</title>
+            <link>http://www.imdb.com/title/tt1823672/</link>
+            <guid>http://www.imdb.com/title/tt1823672/</guid>
+            <description></description>
+        </item>
+        <item>
+          <pubDate>Thu, 09 Oct 2014 20:11:25 GMT</pubDate>
+            <title>Tomorrowland (2015)</title>
+            <link>http://www.imdb.com/title/tt1964418/</link>
+            <guid>http://www.imdb.com/title/tt1964418/</guid>
+            <description></description>
+        </item>
+    </channel>
+</rss>
